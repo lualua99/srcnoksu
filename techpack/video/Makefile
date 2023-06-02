@@ -7,6 +7,7 @@ endif
 
 ifeq ($(CONFIG_ARCH_KONA), y)
 LINUXINCLUDE    += -include $(srctree)/techpack/video/config/konavidconf.h
+LINUXINCLUDE    += -Wno-pointer-to-int-cast
 endif
 
 # auto-detect subdirs
