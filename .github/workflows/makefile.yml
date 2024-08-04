@@ -1,23 +1,35 @@
-name: CI
+name: Build on Tag
 
 on:
-  workflow_dispatch:
+  push:
+    tags: '*'
 
 jobs:
-  build-kernel:
-    name: Build Kernel
-    runs-on: ubuntu-20.04
+  build:
+    runs-on: ubuntu-latest
     steps:
-      - name: Build
-        uses: dabao1955/kernel_build_action@main
-        with:
-          kernel-url: https://github.com/lualua99/srcnoksu
-          kernel-branch: android13-clo
-          config: alioth_defconfig
-          arch: arm64
-          aosp-gcc: true
-          aosp-clang: true
-          python-2.7: true
-          android-version: 12
-          aosp-clang-version: r383902
-          anykernel3: false
+    - name: Checkout kernel source
+      uses: actions/checkout@v2
+
+    - name: Checkout zipper
+      uses: actions/checkout@v2
+      with:
+        repository: lemniskett/AnyKernel3
+        path: zipper
+
+    - name: Android kernel build
+      uses: https://github.com/lualua99/srcnoksu
+      id: build
+      env:
+        NAME: Dark-Ages-Último
+      with:
+        arch: arm64
+        compiler: gcc/10
+        defconfig: alioth_defconfig
+        image: Image
+
+    - name: Release build
+      uses: ncipollo/release-action@v1
+      with:
+        artifacts: ${{ steps.build.outputs.outfile }}
+        token: ${{ secrets.GITHUB_TOKEN }}
