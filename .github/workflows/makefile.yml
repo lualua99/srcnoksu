@@ -1,35 +1,31 @@
-name: Build on Tag
-
+# A simple action usage
+name: Build Kernel
 on:
-  push:
-    tags: '*'
+  workflow_dispatch:
 
 jobs:
-  build:
+  Build-Kernel:
+    strategy:
+      fail-fast: false
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
     steps:
-    - name: Checkout kernel source
-      uses: actions/checkout@v2
-
-    - name: Checkout zipper
-      uses: actions/checkout@v2
+    - name: Build Kernel
+      uses: dabao1955/kernel_build_action@main
       with:
-        repository: lemniskett/AnyKernel3
-        path: zipper
-
-    - name: Android kernel build
-      uses: https://github.com/lualua99/srcnoksu
-      id: build
-      env:
-        NAME: Dark-Ages-Último
-      with:
-        arch: arm64
-        compiler: gcc/10
-        defconfig: alioth_defconfig
-        image: Image
-
-    - name: Release build
-      uses: ncipollo/release-action@v1
-      with:
-        artifacts: ${{ steps.build.outputs.outfile }}
-        token: ${{ secrets.GITHUB_TOKEN }}
+          kernel-url: https://github.com/lualua99/srcnoksu
+          kernel-dir: msm-4.19
+          kernel-branch: android13-clo
+          config: alioth_defconfig
+          arch: arm64
+          aosp-gcc: true
+          aosp-clang: true
+          ksu: false
+          ksu-version: main
+          android-version: 12
+          aosp-clang-version: r383902
+          python-27: true
+          disable-lto: false
+          anykernel3: false
