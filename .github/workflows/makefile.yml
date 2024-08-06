@@ -29,4 +29,4 @@ jobs:
           python-27: true
           disable-lto: true
           anykernel3: true
-          release: true
+          
